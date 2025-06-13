@@ -1,8 +1,47 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'http://localhost:8000';
 
-export const getParcels = () => axios.get(`${BASE_URL}/parcels`);
-export const createParcel = (parcel) => axios.post(`${BASE_URL}/parcels`, parcel);
-export const deleteParcel = (trackingNumber) => axios.delete(`${BASE_URL}/parcels/${trackingNumber}`);
-export const updateParcel = (trackingNumber, updatedParcel) => axios.put(`${BASE_URL}/parcels/${trackingNumber}`, updatedParcel);
+// ✅ Login with JSON body
+export const login = async ({ username, password }) => {
+  return axios.post(`${BASE_URL}/token`, {
+    username,
+    password
+  }, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
+// ✅ Get today's delivery orders
+export const getTodayOrders = async (token) => {
+  return axios.get(`${BASE_URL}/delivery-orders/today`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+// ✅ Get today's parcel summary
+export const getParcelSummary = async (token) => {
+  return axios.get(`${BASE_URL}/parcels/today`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+// ✅ Upload a file with vendor name
+export const uploadFile = async (vendorName, file, token) => {
+  const formData = new FormData();
+  formData.append('vendor_name', vendorName);
+  formData.append('file', file);
+
+  return axios.post(`${BASE_URL}/upload-orders`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
